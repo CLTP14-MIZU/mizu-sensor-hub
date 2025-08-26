@@ -60,7 +60,7 @@ class NavigationBar:
         """Create the application icon with satellite dish emoji."""
         self.app_icon_label = customtkinter.CTkLabel(
             master=self.navigation_bar,
-            text="📡",
+            text="🤖",
             font=(ICON_FONT, ICON_FONT_SIZE, "bold"),
             text_color=ICON_COLOR
         )

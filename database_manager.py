@@ -128,8 +128,8 @@ class DatabaseManager:
                 'soil_moisture': self._safe_float(data.get('soil_moisture')),
                 'soil_temperature': self._safe_float(data.get('soil_temp')),
                 'wind_speed': self._safe_float(data.get('wind_speed')),
-                'longitude': self._safe_float(data.get('longitude')),
-                'latitude': self._safe_float(data.get('latitude')),
+                'ambient_light': self._safe_float(data.get('ambient_light')),
+                'uv_light': self._safe_float(data.get('uv_light')),
                 'transmitted': False
             }
         except Exception:
@@ -147,8 +147,8 @@ class DatabaseManager:
                     'soil_moisture': self._safe_float(parts[3]),
                     'soil_temperature': self._safe_float(parts[4]),
                     'wind_speed': self._safe_float(parts[5]) if len(parts) > 5 else None,
-                    'longitude': self._safe_float(parts[6]) if len(parts) > 6 else None,
-                    'latitude': self._safe_float(parts[7]) if len(parts) > 7 else None,
+                    'ambient_light': self._safe_float(parts[6]) if len(parts) > 6 else None,
+                    'uv_light': self._safe_float(parts[7]) if len(parts) > 7 else None,
                     'transmitted': False
                 }
         except Exception:
@@ -167,25 +167,25 @@ class DatabaseManager:
                     key = key.strip().lower()
                     value = value.strip()
 
-                    if key == 'device_id':
+                    if key == 'd_id':
                         data['device_id'] = value
-                    elif key == 'ambient_temp':
+                    elif key == 'a_t':
                         data['ambient_temperature'] = self._safe_float(value)
-                    elif key == 'humidity':
+                    elif key == 'hum':
                         data['humidity'] = self._safe_float(value)
-                    elif key == 'soil_moisture':
+                    elif key == 's_m':
                         data['soil_moisture'] = self._safe_float(value)
-                    elif key == 'soil_temp':
+                    elif key == 's_t':
                         data['soil_temperature'] = self._safe_float(value)
-                    elif key == 'wind_speed':
+                    elif key == 'w_s':
                         data['wind_speed'] = self._safe_float(value)
-                    elif key == 'longitude':
-                        data['longitude'] = self._safe_float(value)
-                    elif key == 'latitude':
-                        data['latitude'] = self._safe_float(value)
+                    elif key == 'a_l':
+                        data['ambient_light'] = self._safe_float(value)
+                    elif key == 'uv_l':
+                        data['uv_light'] = self._safe_float(value)
 
             # Check if we have at least a device_id and some sensor data
-            if 'device_id' in data and any(key in data for key in ['ambient_temperature', 'humidity', 'soil_moisture', 'soil_temperature', 'wind_speed', 'longitude', 'latitude']):
+            if 'device_id' in data and any(key in data for key in ['ambient_temperature', 'humidity', 'soil_moisture', 'soil_temperature', 'wind_speed', 'ambient_light', 'uv_light']):
                 data['transmitted'] = False
                 return data
 
@@ -207,8 +207,8 @@ class DatabaseManager:
                     'soil_moisture': self._safe_float(numbers[2]),
                     'soil_temperature': self._safe_float(numbers[3]),
                     'wind_speed': self._safe_float(numbers[4]) if len(numbers) > 4 else None,
-                    'longitude': self._safe_float(numbers[5]) if len(numbers) > 5 else None,
-                    'latitude': self._safe_float(numbers[6]) if len(numbers) > 6 else None,
+                    'ambient_light': self._safe_float(numbers[5]) if len(numbers) > 5 else None,
+                    'uv_light': self._safe_float(numbers[6]) if len(numbers) > 6 else None,
                     'transmitted': False
                 }
         except Exception:

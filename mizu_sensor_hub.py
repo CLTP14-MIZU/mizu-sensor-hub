@@ -231,12 +231,88 @@ class MizuSensorHub(customtkinter.CTk):
         Args:
             data: The received data string
         """
+        # Parse and format the sensor data for display
+        formatted_data = self._format_sensor_data_for_display(data)
+
         # Update the data display in the main thread
-        self.after(0, self.main_content_panel.update_data_display, data)
+        self.after(0, self.main_content_panel.update_data_display, formatted_data)
 
         # Save sensor data to database
         if hasattr(self, 'database_manager'):
             self.database_manager.save_sensor_data(data)
+
+    def _format_sensor_data_for_display(self, data: str) -> str:
+        """
+        Format sensor data for display in the UI.
+
+        Args:
+            data: Raw sensor data string
+
+        Returns:
+            Formatted string for display
+        """
+        try:
+            # Remove whitespace and newlines
+            data = data.strip()
+
+            # Check if it's in the expected format: d_id=%s,a_t=%.2f,hum=%.2f,s_m=%.1f,s_t=%.1f,w_s=%.1f,a_l=%.2f,uv_l=%.2f
+            if '=' in data and ',' in data:
+                # Parse the key-value pairs
+                sensor_data = {}
+                pairs = data.split(',')
+
+                for pair in pairs:
+                    if '=' in pair:
+                        key, value = pair.split('=', 1)
+                        key = key.strip()
+                        value = value.strip()
+                        sensor_data[key] = value
+
+                # Format the display string
+                formatted_lines = []
+                formatted_lines.append("=== SENSOR DATA RECEIVED ===")
+                formatted_lines.append(f"Timestamp: {self._get_current_timestamp()}")
+
+                if 'd_id' in sensor_data:
+                    formatted_lines.append(f"Device ID: {sensor_data['d_id']}")
+
+                if 'a_t' in sensor_data:
+                    formatted_lines.append(f"Ambient Temperature: {sensor_data['a_t']}°C")
+
+                if 'hum' in sensor_data:
+                    formatted_lines.append(f"Humidity: {sensor_data['hum']}%")
+
+                if 's_m' in sensor_data:
+                    formatted_lines.append(f"Soil Moisture: {sensor_data['s_m']}%")
+
+                if 's_t' in sensor_data:
+                    formatted_lines.append(f"Soil Temperature: {sensor_data['s_t']}°C")
+
+                if 'w_s' in sensor_data:
+                    formatted_lines.append(f"Wind Speed: {sensor_data['w_s']} m/s")
+
+                if 'a_l' in sensor_data:
+                    formatted_lines.append(f"Ambient Light: {sensor_data['a_l']} lux")
+
+                if 'uv_l' in sensor_data:
+                    formatted_lines.append(f"UV Light: {sensor_data['uv_l']} mW/cm²")
+
+                formatted_lines.append("=" * 30)
+                formatted_lines.append("")  # Empty line for spacing
+
+                return "\n".join(formatted_lines)
+            else:
+                # If not in expected format, display raw data
+                return f"Raw Data: {data}\n"
+
+        except Exception as e:
+            # If parsing fails, display raw data with error info
+            return f"Error parsing data: {e}\nRaw Data: {data}\n"
+
+    def _get_current_timestamp(self) -> str:
+        """Get current timestamp for display."""
+        from datetime import datetime
+        return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     def _handle_window_close(self, event=None) -> None:
         """
